@@ -25,7 +25,18 @@ export default defineConfig({
   /* Opt out of parallel tests on CI. */
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
+  reporter: [
+    ['html'],
+    ['list'],
+    ['aio-tests-playwright-reporter', {
+      aioAPIKey: process.env.AIO_API_KEY,
+      jiraToken: process.env.JIRA_PAT,
+      jiraUrl: 'https://finartis.atlassian.net/',
+      projectKey: 'FP',
+      createNewCycle: true,
+      cycleName: 'Automated Playwright Run'
+    }]
+  ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -89,24 +100,5 @@ export default defineConfig({
   //   url: 'http://127.0.0.1:3000',
   //   reuseExistingServer: !process.env.CI,
   // },
-
-  import { defineConfig } from '@playwright/test';
-
-export default defineConfig({
-  reporter: [
-    ['list'], // Standard console reporter
-    ['aio-tests-playwright-reporter', {
-      aioAPIKey: process.env.AIO_API_KEY,      // AIO Tests token
-      jiraToken: process.env.JIRA_PAT,         // Jira Personal Access Token
-      jiraUrl: 'https://finartis.atlassian.net/',
-      projectKey: 'PROJ',                      // Your Jira Project Key
-      createNewCycle: true,                    // Creates a new test cycle per run
-      cycleName: 'Automated Playwright Run'
-    }]
-  ],
-  use: {
-    headless: true,
-  },
-});
 });
 
