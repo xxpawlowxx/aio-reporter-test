@@ -28,7 +28,7 @@ export default defineConfig({
   reporter: [
     ['html'],
     ['list'],
-    ['aio-tests-playwright-reporter', {
+    ['aiotests-playwright-reporter', {
       aioAPIKey: process.env.AIO_API_KEY,
       jiraToken: process.env.JIRA_PAT,
       jiraUrl: 'https://finartis.atlassian.net/',
