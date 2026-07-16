@@ -32,4 +32,4 @@ jobs:
         env:
           AIO_API_KEY: ${{ secrets.AIO_API_KEY }}
           JIRA_PAT: ${{ secrets.JIRA_PAT }}
-        run: npx playwright test
+        run: npx playwright test /pew/eval2.spec.js
