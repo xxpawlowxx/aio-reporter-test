@@ -1,7 +1,11 @@
 import { test, expect } from '@playwright/test';
 import * as XLSX from 'xlsx';
 import path from 'path';
+import { fileURLToPath } from 'url';
 
+// ES module fix for __dirname
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const userDataFile = path.join(__dirname, '../Data/testdata1.xlsx');
 
