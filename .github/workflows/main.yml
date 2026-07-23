@@ -8,7 +8,7 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest  # Using GitHub-hosted runner
+    runs-on: self-hosted  # Using self-hosted runner for local network access
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
