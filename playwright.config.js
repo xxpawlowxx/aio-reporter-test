@@ -31,12 +31,20 @@ export default defineConfig({
     ['html'],
     ['list'],
     ['aiotests-playwright-reporter', {
-      aioAPIKey: process.env.AIO_API_KEY,
-      jiraToken: process.env.JIRA_PAT,
-      jiraUrl: 'https://finartis.atlassian.net/',
-      projectKey: 'FP',
-      createNewCycle: true,
-      cycleName: 'Automated Playwright Run'
+      aioConfig: {
+        enableReporting: true,
+        cloud: {
+          apiKey: process.env.AIO_API_KEY
+        },
+        jiraProjectId: 'FP',
+        cycleDetails: {
+          createNewCycle: true,
+          cycleName: 'Automated Playwright Run'
+        },
+        addNewRun: true,
+        addAttachmentToFailedCases: true,
+        createNewRunForRetries: false
+      }
     }]
   ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
