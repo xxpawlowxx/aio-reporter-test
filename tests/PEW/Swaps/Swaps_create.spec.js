@@ -1,0 +1,48 @@
+﻿import { test, expect } from '@playwright/test';
+
+test('test @FP-TC-355', async ({ page }) => {
+  await page.goto('http://192.168.137.2:7080/realms/prospero/protocol/openid-connect/auth?response_type=code&client_id=rest-api-client&scope=openid%20profile%20email&state=fQUZ1XQKbQG8_LSq8WptxkbLQXPWZGNb3pbAHTRsweU%3D&redirect_uri=http://192.168.137.2:8800/login/oauth2/code/keycloak&nonce=R4KN2ka2KQRggHFf5sqHEXMQds209rz1oFW3msnJJ_k&code_challenge=Q4EJKR9U9d7vYuTd5dTOtnGV6vbj71_4GQCZGgPsZeo&code_challenge_method=S256');
+  await page.getByRole('textbox', { name: 'Username or email' }).click();
+  await page.getByRole('textbox', { name: 'Username or email' }).fill('admin');
+  await page.getByRole('textbox', { name: 'Username or email' }).press('Tab');
+  await page.getByRole('textbox', { name: 'Password' }).fill('admin');
+  await page.getByRole('button', { name: 'Sign In' }).click();
+  await page.locator('a').filter({ hasText: 'Back Office' }).click();
+  await page.locator('a').filter({ hasText: /^Swaps$/ }).click();
+  await page.getByRole('link', { name: 'New Contract' }).click();
+  await page.getByRole('combobox').first().selectOption('CMDTYNOSTR');
+  await page.getByRole('button', { name: 'Toggle calendar' }).first().click();
+  await page.getByLabel('Friday, 28 August').getByText('28').click();
+  await page.getByRole('combobox').nth(1).selectOption('CHF');
+  await page.getByRole('button', { name: 'Toggle calendar' }).nth(1).click();
+  await page.getByLabel('Monday, 31 August').getByText('31').click();
+  await page.getByRole('textbox').nth(5).click();
+  await page.getByRole('textbox').nth(5).fill('200');
+  await page.getByRole('textbox').nth(3).click();
+  await page.getByRole('textbox').nth(3).fill('1');
+  await page.locator('lib-security-selector').getByRole('textbox').click();
+  await page.locator('lib-security-selector').getByRole('textbox').fill('%');
+  await page.getByRole('cell', { name: 'WALT DISNEY' }).click();
+  await page.getByRole('combobox').nth(2).selectOption('1');
+  await page.getByRole('textbox').nth(4).click();
+  await page.getByRole('textbox').nth(4).fill('1');
+  await page.locator('input[type="text"]').nth(2).click();
+  await page.locator('input[type="text"]').nth(2).fill('%');
+  await page.getByRole('cell', { name: 'PHOENIX BANK', exact: true }).click();
+  await page.locator('input[type="text"]').nth(4).click();
+  await page.locator('input[type="text"]').nth(4).fill('%');
+  await page.getByRole('cell', { name: 'CREDIT SUISSE' }).first().click();
+  await page.locator('input[type="text"]').nth(5).click();
+  await page.locator('input[type="text"]').nth(5).fill('%');
+  await page.getByRole('cell', { name: 'BCV' }).click();
+  await page.getByRole('combobox').nth(3).selectOption('1');
+  await page.locator('input[formcontrolname="LEG1_CLIENT_PRICE"]').click();
+  await page.locator('input[formcontrolname="LEG1_CLIENT_PRICE"]').fill('5');
+  await page.getByRole('combobox').nth(4).selectOption('1');
+  await page.locator('input[formcontrolname="LEG2_CLIENT_PRICE"]').click();
+  await page.locator('input[formcontrolname="LEG2_CLIENT_PRICE"]').fill('4');
+  await page.locator('div').filter({ hasText: 'Swap Open Settle Save Cancel' }).nth(1).click();
+  await page.getByRole('button', { name: 'Save' }).click();
+  await page.goto('http://192.168.137.2:8800/1/swaps/227');
+});
+
