@@ -12,8 +12,10 @@ test('test @FP-TC-318', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Search User (Ctrl K)' }).click();
   await page.getByRole('textbox', { name: 'Search User (Ctrl K)' }).fill('admin');
   await page.getByRole('textbox', { name: 'Search User (Ctrl K)' }).press('Tab');
-  await page.getByRole('row', { name: 'ADMIN ADMIN ADMIN', exact: true }).press('Enter');
-  await page.getByText('Usr Actor 1').click();
+  const adminRow = page.getByRole('row', { name: /ADMIN ADMIN ADMIN/ });
+  await expect(adminRow).toBeVisible();
+  await adminRow.getByRole('link', { name: 'ADMIN' }).click();
+  await expect(page.getByRole('button', { name: 'Accessible Clients' })).toBeVisible();
   await page.getByRole('button', { name: 'Accessible Clients' }).click();
 });
 
