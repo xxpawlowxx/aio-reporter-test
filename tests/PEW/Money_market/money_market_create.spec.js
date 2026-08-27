@@ -1,6 +1,24 @@
 import { test, expect } from '@playwright/test';
 
 test('test @FP-TC-336', async ({ page }) => {
+  const dismissInterestDialogIfPresent = async () => {
+    const dialog = page.getByRole('dialog').filter({ hasText: 'Client Interest Computation' });
+    const isVisible = await dialog.isVisible().catch(() => false);
+    if (!isVisible) return;
+
+    const noButton = dialog.getByRole('button', { name: 'No' });
+    if (await noButton.isVisible().catch(() => false)) {
+      await noButton.click();
+    } else {
+      const closeButton = dialog.getByRole('button', { name: 'Close' });
+      if (await closeButton.isVisible().catch(() => false)) {
+        await closeButton.click();
+      }
+    }
+
+    await expect(dialog).toBeHidden({ timeout: 10000 });
+  };
+
   await page.goto('http://192.168.137.2:7080/realms/prospero/protocol/openid-connect/auth?response_type=code&client_id=rest-api-client&scope=openid%20profile%20email&state=SfOKc5DSMHNgOh7whEQJ7WqrtS6ZI251D-h0ekte2BA%3D&redirect_uri=http://192.168.137.2:8800/login/oauth2/code/keycloak&nonce=3rlV5PaoFj2iUTQulG3zwPZNLtySfWaX_DJYbnJQcNo&code_challenge=vcH6z15ANF0YgqXnFYi7FmkFhnmuXer10hPQwr2ug_U&code_challenge_method=S256');
   await page.getByRole('textbox', { name: 'Username or email' }).click();
   await page.getByRole('textbox', { name: 'Username or email' }).fill('admin');
@@ -26,9 +44,21 @@ test('test @FP-TC-336', async ({ page }) => {
   await page.locator('input[type="text"]').nth(1).click();
   await page.locator('input[type="text"]').nth(1).fill('2');
   await page.locator('lib-deposit-clients').getByRole('button').filter({ hasText: /^$/ }).click();
-  await page.locator('input[type="text"]').nth(2).click();
-  await page.locator('input[type="text"]').nth(2).fill('%');
-  await page.getByRole('cell', { name: 'TONY STARK', exact: true }).click();
+  await dismissInterestDialogIfPresent();
+
+  const clientPortfolioInput = page.locator('lib-deposit-clients tbody tr').first().getByRole('textbox').first();
+  await expect(clientPortfolioInput).toBeVisible({ timeout: 15000 });
+  await expect(clientPortfolioInput).toBeEnabled({ timeout: 15000 });
+  await clientPortfolioInput.click();
+  await clientPortfolioInput.fill('%');
+  const clientSuggestionRow = page
+    .locator('lib-deposit-clients tbody tr')
+    .first()
+    .locator('table tr')
+    .filter({ hasText: 'TONY STARK' })
+    .first();
+  await expect(clientSuggestionRow).toBeVisible({ timeout: 15000 });
+  await clientSuggestionRow.click();
   await page.locator('lib-external-selector > lib-autocomplete > .ac-no-scroll > .dropdown-toggle > .ac-border > .ac-input-box > .ac-input-wrapper > .form-control').click();
   await page.locator('lib-external-selector > lib-autocomplete > .ac-no-scroll > .dropdown-toggle > .ac-border > .ac-input-box > .ac-input-wrapper > .form-control').fill('%');
   await page.getByRole('cell', { name: 'BANK OF SINGAPORE' }).first().click();
