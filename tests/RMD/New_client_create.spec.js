@@ -7,11 +7,15 @@ test('test', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Username or email' }).press('Tab');
   await page.getByRole('textbox', { name: 'Password' }).fill('admin');
   await page.getByRole('button', { name: 'Sign In' }).click();
-  await page.getByRole('link', { name: 'person_add New Client' }).click();
-  await page.getByRole('textbox').click();
-  await page.getByRole('textbox').fill('test paw port');
-  await page.locator('#pn_id_98').getByRole('button', { name: 'dropdown trigger' }).click();
-  await page.getByText('Single Accounts').click();
+  await expect(async () => {
+    await page.getByRole('link', { name: 'person_add New Client' }).click();
+    await expect(page).toHaveURL(/clientAdministration/, { timeout: 5000 });
+  }).toPass({ timeout: 30000 });
+  await page.locator('app-client-identification-card').waitFor({ state: 'visible' });
+  await page.getByRole('textbox').first().click();
+  await page.getByRole('textbox').first().fill('test paw port');
+  await page.locator('span.p-float-label').filter({ hasText: 'Client Type' }).getByRole('button', { name: 'dropdown trigger' }).click();
+  await page.getByRole('option', { name: 'Single Accounts', exact: true }).click();
   await page.locator('app-client-beneficial-owners-card').getByRole('button', { name: 'Add' }).click();
   await page.locator('span').filter({ hasText: 'First Name' }).getByRole('textbox').click();
   await page.locator('span').filter({ hasText: 'First Name' }).getByRole('textbox').fill('paw');
@@ -20,10 +24,11 @@ test('test', async ({ page }) => {
   await page.locator('app-client-addresses-card').getByRole('button', { name: 'Add' }).click();
   await page.getByRole('textbox').nth(5).click();
   await page.getByRole('textbox').nth(5).fill('everywhere');
-  await page.locator('app-client-related-roles').getByRole('button', { name: 'Add' }).click();
-  await page.locator('#pn_id_103').getByRole('button', { name: 'dropdown trigger' }).click();
+  const relatedRoles = page.locator('app-client-related-roles');
+  await relatedRoles.getByRole('button', { name: 'Add' }).click();
+  await relatedRoles.getByRole('button', { name: 'dropdown trigger' }).first().click();
   await page.getByRole('option', { name: 'Beneficiary', exact: true }).click();
-  await page.locator('#pn_id_105').getByRole('button', { name: 'dropdown trigger' }).click();
+  await relatedRoles.getByRole('button', { name: 'dropdown trigger' }).nth(1).click();
   await page.getByRole('option', { name: 'MICHAEL STARK' }).click();
   await page.getByRole('button', { name: 'Save Modifications' }).click();
 });

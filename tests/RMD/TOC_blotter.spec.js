@@ -7,11 +7,22 @@ test('test', async ({ page }) => {
   await page.getByRole('textbox', { name: 'Username or email' }).press('Tab');
   await page.getByRole('textbox', { name: 'Password' }).fill('admin');
   await page.getByRole('button', { name: 'Sign In' }).click();
-  await page.getByRole('link', { name: 'list Trade Order Blotter' }).click();
-  await page.locator('#pn_id_101').getByRole('button', { name: 'dropdown trigger' }).click();
-  await page.locator('#pn_id_101').getByRole('button', { name: 'dropdown trigger' }).click();
-  await page.locator('#pn_id_103').getByRole('button', { name: 'dropdown trigger' }).click();
-  await page.getByText('Full access').click();
-  await page.locator('#pn_id_103').getByRole('button', { name: 'dropdown trigger' }).click();
-  await page.getByText('Portfolio Managers').click();
+  await expect(async () => {
+    await page.getByRole('link', { name: 'list Trade Order Blotter' }).click();
+    await expect(page).toHaveURL(/trade_order_blotter/, { timeout: 5000 });
+  }).toPass({ timeout: 30000 });
+  await expect(page.locator('p-dropdown')).toHaveCount(3, { timeout: 20000 });
+  const workgroupDropdown = page.locator('p-dropdown').nth(1);
+
+  const selectWorkgroup = async (name) => {
+    // Ensure no stale overlay panel lingers before opening.
+    await expect(page.locator('.p-dropdown-panel')).toHaveCount(0);
+    await workgroupDropdown.getByRole('button', { name: 'dropdown trigger' }).click();
+    await page.locator(`li[role="option"][aria-label="${name}"]:visible`).click();
+    // Wait for the overlay panel to fully close before the next interaction.
+    await expect(page.locator('.p-dropdown-panel')).toHaveCount(0);
+  };
+
+  await selectWorkgroup('Full access');
+  await selectWorkgroup('Portfolio Managers');
 });
